@@ -5,8 +5,8 @@ public class Leetcode100_SameTree {
         int[] root = {3,9,20, -1, -1,15,7};
         int[] root2 = {3,9,20,-1,-1,15,7};
 
-        TreeNode tree = createBinaryTree(root, new TreeNode(), 0);
-        TreeNode tree2 = createBinaryTree(root2, new TreeNode(), 0);
+        TreeNode100 tree = createBinaryTree(root, new TreeNode100(), 0);
+        TreeNode100 tree2 = createBinaryTree(root2, new TreeNode100(), 0);
 
         boolean sameTree = depthFirstSearchUsingRecursion(tree, tree2);
 
@@ -14,10 +14,10 @@ public class Leetcode100_SameTree {
 
     }
 
-    private static TreeNode createBinaryTree(int[] arr, TreeNode root, int i) {
+    private static TreeNode100 createBinaryTree(int[] arr, TreeNode100 root, int i) {
 
         if (i < arr.length && arr[i] != -1) {
-            root = new TreeNode(arr[i]);
+            root = new TreeNode100(arr[i]);
 
             // Insert left child
             root.left = createBinaryTree(arr, root.left, 2 * i + 1);
@@ -29,7 +29,7 @@ public class Leetcode100_SameTree {
 
     }
 
-    private static boolean depthFirstSearchUsingRecursion(TreeNode tree, TreeNode tree2) {
+    private static boolean depthFirstSearchUsingRecursion(TreeNode100 tree, TreeNode100 tree2) {
         // if both have reached the end
         if(tree == null && tree2 == null){
             return true;
@@ -51,5 +51,24 @@ public class Leetcode100_SameTree {
         }
 
         return false;
+    }
+}
+
+class TreeNode100 {
+    int val;
+    TreeNode100 left;
+    TreeNode100 right;
+
+    TreeNode100() {
+    }
+
+    TreeNode100(int val) {
+        this.val = val;
+    }
+
+    TreeNode100(int val, TreeNode100 left, TreeNode100 right) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
     }
 }
