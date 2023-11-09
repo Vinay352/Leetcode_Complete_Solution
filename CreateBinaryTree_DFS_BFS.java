@@ -5,8 +5,10 @@ import java.util.*;
 public class CreateBinaryTree_DFS_BFS {
     public static void main(String[] args) {
         int[] root = {3,9,20, -1, -1,15,7};
+        int[] root2 = {3,9,20,-1,-1,15,7};
 
         TreeNode tree = createBinaryTree(root, new TreeNode(), 0);
+        TreeNode tree2 = createBinaryTree(root2, new TreeNode(), 0);
 
 //        printBinaryTree(tree);
 
