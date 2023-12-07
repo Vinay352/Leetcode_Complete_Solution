@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class MeetingRooms {
+public class Leetcode252_MeetingRooms {
     public static void main(String[] args) {
         int[][] inputArr = { {5,10}, {0,30}, {15,20}};
 
