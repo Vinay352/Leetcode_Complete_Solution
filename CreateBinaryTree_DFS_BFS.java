@@ -27,12 +27,157 @@ public class CreateBinaryTree_DFS_BFS {
         TreeMultiChildNode rootOfGeneralTree = createGeneralTreeHardcoded();
 
         //This is a method to do Breadth First Traversal for a general tree.
+        System.out.println("Breadth First Traversal Order for General Tree: ");
         breadthFirstTraversalForGeneralTree(rootOfGeneralTree);
 
         // This is a method to do Breadth First Search for a general tree.
+        System.out.println("\nBreadth First Search for target for General Tree: D");
         boolean bfsFoundGeneralTree = breadthFirstSearchForGeneralTree(rootOfGeneralTree, 'D');
-        System.out.println("\n" + bfsFoundGeneralTree);
+        System.out.println(bfsFoundGeneralTree);
 
+        System.out.println("\nDepth First Traversal Order for General Tree: ");
+        depthFirstTraversalUsingStackForGeneralTree(rootOfGeneralTree, 'D');
+
+        System.out.println("\nDepth First Search for target for General Tree: D");
+        boolean dfsFoundUsingStackForGeneralTree = depthFirstSearchUsingStackForGeneralTree(rootOfGeneralTree, 'D');
+        System.out.println(dfsFoundUsingStackForGeneralTree);
+
+        System.out.println("\nDepth First Search (using Recursion for General Tree) for target: D");
+        Set<TreeMultiChildNode> visitedSet = new HashSet<TreeMultiChildNode>();
+        visitedSet.add(rootOfGeneralTree);
+        boolean dfsFoundUsingRecursionForGeneralTree = depthFirstSearchUsingRecursionForGeneralTree(rootOfGeneralTree, 'D', visitedSet);
+        System.out.println(dfsFoundUsingRecursionForGeneralTree);
+
+    }
+
+    private static boolean depthFirstSearchUsingRecursionForGeneralTree(TreeMultiChildNode rootOfGeneralTree, char target, Set<TreeMultiChildNode> visitedSet) {
+        if(rootOfGeneralTree == null){
+            return false;
+        }
+
+        if(rootOfGeneralTree.val == target){
+            return true;
+        }
+
+        // prints the depth first traversal order
+        System.out.println(rootOfGeneralTree.val);
+
+        // set to keep track of child responses for current nodes
+        Set<Boolean> childResponsesForCurrentNode = new HashSet<Boolean>();
+
+        // for every childNode of popNode
+        for(int i = 0; i < rootOfGeneralTree.childNodes.size(); i++){
+            TreeMultiChildNode tempChildNode = rootOfGeneralTree.childNodes.get(i);
+
+            // if the tempChildNode is in the visited set
+            // true = successful addition = was not in the set
+            // false = otherwise = was in the set
+            boolean notPresentInVisitedSet = visitedSet.add(tempChildNode);
+
+            // successful addition of tempChildNode to visitedSet = node was not in the visited set
+            if(notPresentInVisitedSet == true){
+                // get the child node's response
+                boolean childResponse = depthFirstSearchUsingRecursionForGeneralTree(tempChildNode, target, visitedSet);
+                childResponsesForCurrentNode.add(childResponse);
+
+                // if any child has responded = true
+                // we have found the target
+                if(childResponsesForCurrentNode.contains(true)){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+
+    }
+
+    private static boolean depthFirstSearchUsingStackForGeneralTree(TreeMultiChildNode rootOfGeneralTree, int target) {
+        if(rootOfGeneralTree == null){
+            return false;
+        }
+
+        // stack to keep track of incoming nodes of the tree
+        // stack is used to imitate traverse the tree depth wise
+        Stack<TreeMultiChildNode> stack = new Stack<>();
+        stack.push(rootOfGeneralTree);
+
+        // track visited nodes
+        Set<TreeMultiChildNode> visitedSet = new HashSet<>();
+        visitedSet.add(rootOfGeneralTree);
+
+        while(!stack.isEmpty()){
+            TreeMultiChildNode popNode = stack.pop();
+
+            if(popNode.val == target){ // check for a match
+                return true;
+            }
+
+            // for every childNode of popNode
+            for(int i = 0; i < popNode.childNodes.size(); i++){
+                TreeMultiChildNode tempChildNode = popNode.childNodes.get(i);
+
+                // prints the depth first traversal order
+//                System.out.println(popNode.val);
+
+                // if the tempChildNode is in the visited set
+                // true = successful addition = was not in the set
+                // false = otherwise = was in the set
+                boolean notPresentInVisitedSet = visitedSet.add(tempChildNode);
+
+                // successful addition of tempChildNode to visitedSet = node was not in the visited set
+                if(notPresentInVisitedSet == true){
+                    stack.push(tempChildNode);
+                }
+            }
+        }
+
+        // still not found
+        return false;
+    }
+
+    private static boolean depthFirstTraversalUsingStackForGeneralTree(TreeMultiChildNode rootOfGeneralTree, int target) {
+        if(rootOfGeneralTree == null){
+            return false;
+        }
+
+        // stack to keep track of incoming nodes of the tree
+        // stack is used to imitate traverse the tree depth wise
+        Stack<TreeMultiChildNode> stack = new Stack<>();
+        stack.push(rootOfGeneralTree);
+
+        // track visited nodes
+        Set<TreeMultiChildNode> visitedSet = new HashSet<>();
+        visitedSet.add(rootOfGeneralTree);
+
+        while(!stack.isEmpty()){
+            TreeMultiChildNode popNode = stack.pop();
+
+            // prints the depth first traversal order
+            System.out.println(popNode.val);
+
+            if(popNode.val == target){ // check for a match
+                return true;
+            }
+
+            // for every childNode of popNode
+            for(int i = 0; i < popNode.childNodes.size(); i++){
+                TreeMultiChildNode tempChildNode = popNode.childNodes.get(i);
+
+                // if the tempChildNode is in the visited set
+                // true = successful addition = was not in the set
+                // false = otherwise = was in the set
+                boolean notPresentInVisitedSet = visitedSet.add(tempChildNode);
+
+                // successful addition of tempChildNode to visitedSet = node was not in the visited set
+                if(notPresentInVisitedSet == true){
+                    stack.push(tempChildNode);
+                }
+            }
+        }
+
+        // still not found
+        return false;
     }
 
     private static boolean breadthFirstSearchForGeneralTree(TreeMultiChildNode rootOfGeneralTree, char target) {
@@ -53,9 +198,6 @@ public class CreateBinaryTree_DFS_BFS {
         // implement Breadth first search
         while(!queue.isEmpty()){
             TreeMultiChildNode popNode = queue.poll(); // get the top node
-
-            // prints the breadth first traversal order
-//            System.out.println(popNode.val);
 
             if(popNode.val == target){
                 return true;
