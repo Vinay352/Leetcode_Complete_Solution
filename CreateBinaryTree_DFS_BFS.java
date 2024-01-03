@@ -3,6 +3,7 @@ package com.company.Leetcode_Complete_Solution;
 import java.util.*;
 
 public class CreateBinaryTree_DFS_BFS {
+
     public static void main(String[] args) {
         int[] root = {3,9,20, -1, -1,15,7};
         int[] root2 = {3,9,20,-1,-1,15,7};
@@ -50,7 +51,154 @@ public class CreateBinaryTree_DFS_BFS {
 
     }
 
-    private static boolean depthFirstSearchUsingRecursionForGeneralTree(TreeMultiChildNode rootOfGeneralTree, char target, Set<TreeMultiChildNode> visitedSet) {
+    private static boolean depthFirstSearchUsingRecursion(TreeNode tree, int target) {
+        if(tree == null){
+            return false;
+        }
+
+        if(tree.val == target){
+            return true;
+        }
+
+        //recurse in left depth
+        boolean foundInLeftDepth = depthFirstSearchUsingRecursion(tree.left, target);
+        //recurse in right depth
+        boolean foundInRightDepth = depthFirstSearchUsingRecursion(tree.right, target);
+
+        return foundInLeftDepth || foundInRightDepth;
+    }
+
+    private static boolean depthFirstSearchUsingStack(TreeNode tree, int target) {
+        if(tree == null){
+            return false;
+        }
+
+        // stack to keep track of incoming nodes of the tree
+        // stack is used to imitate traverse the tree depth wise
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(tree);
+
+        // track visited nodes
+        Set<TreeNode> visitedSet = new HashSet<TreeNode>();
+
+        while(!stack.isEmpty()){
+            TreeNode popNode = stack.pop();
+
+            if(popNode.val == target){ // check for a match
+                return true;
+            }
+
+            if(popNode.right != null){ // insert right node in the queue
+                stack.add(popNode.right);
+            }
+            if(popNode.left != null){ // insert left node in the queue
+                stack.add(popNode.left);
+            }
+
+            visitedSet.add(popNode);
+        }
+
+        // still not found
+        return false;
+    }
+
+    private static boolean breadthFirstSearch(TreeNode tree, int target) {
+        if(tree == null){
+            return false;
+        }
+
+        // queue to keep track of incoming nodes of the tree in level-order fashion
+        Queue<TreeNode> queue = new LinkedList<TreeNode>();
+        queue.add(tree);
+
+        // track visited nodes
+        Set<TreeNode> visitedSet = new HashSet<TreeNode>();
+
+        // implement BFS
+        while(!queue.isEmpty()){
+            TreeNode popNode = queue.poll(); // get the current node
+
+            if(popNode.val == target){ // check for a match
+                return true;
+            }
+
+            if(popNode.left != null){ // insert left node in the queue
+                queue.add(popNode.left);
+            }
+            if(popNode.right != null){ // insert right node in the queue
+                queue.add(popNode.right);
+            }
+
+            visitedSet.add(popNode); // update the visited set
+        }
+        // still not found
+        return false;
+    }
+
+    /**
+     * A method to create a general tree in which nodes can 1 or 2 or more than 2 child nodes.
+     * This function creates a hardcoded tree.
+     *
+     *                  A
+     *                /   \
+     *               B --- C
+     *                \   /|
+     *                  D  |
+     *                 /   |
+     *                E   F
+     *                \  /
+     *                 G
+     *
+     *   Vertices are = A, B, C, D, E, F, G
+     *   Rest all lines are edges
+     *   A child = B, C
+     *   B child = A, C, D
+     *   C child = A, B, D, F
+     *   D child = B, C, E
+     *   E child = D, G
+     *   F child = C, G
+     *   G child = E, F
+     *
+     * */
+    private static TreeMultiChildNode createGeneralTreeHardcoded() {
+        TreeMultiChildNode root = new TreeMultiChildNode('A', new ArrayList<TreeMultiChildNode>());
+        TreeMultiChildNode bNode = new TreeMultiChildNode('B', new ArrayList<TreeMultiChildNode>());
+        TreeMultiChildNode cNode = new TreeMultiChildNode('C', new ArrayList<TreeMultiChildNode>());
+        TreeMultiChildNode dNode = new TreeMultiChildNode('D', new ArrayList<TreeMultiChildNode>());
+        TreeMultiChildNode eNode = new TreeMultiChildNode('E', new ArrayList<TreeMultiChildNode>());
+        TreeMultiChildNode fNode = new TreeMultiChildNode('F', new ArrayList<TreeMultiChildNode>());
+        TreeMultiChildNode gNode = new TreeMultiChildNode('G', new ArrayList<TreeMultiChildNode>());
+
+        root.childNodes.add(bNode);
+        root.childNodes.add(cNode);
+
+        bNode.childNodes.add(root);
+        bNode.childNodes.add(cNode);
+        bNode.childNodes.add(dNode);
+
+        cNode.childNodes.add(root);
+        cNode.childNodes.add(bNode);
+        cNode.childNodes.add(dNode);
+        cNode.childNodes.add(fNode);
+
+        dNode.childNodes.add(bNode);
+        dNode.childNodes.add(cNode);
+        dNode.childNodes.add(eNode);
+
+        eNode.childNodes.add(dNode);
+        eNode.childNodes.add(gNode);
+
+        fNode.childNodes.add(cNode);
+        fNode.childNodes.add(gNode);
+
+        gNode.childNodes.add(eNode);
+        gNode.childNodes.add(fNode);
+
+        return root;
+    }
+
+    private static boolean depthFirstSearchUsingRecursionForGeneralTree(TreeMultiChildNode rootOfGeneralTree, char target,
+                                                                        Set<TreeMultiChildNode> visitedSet) {
         if(rootOfGeneralTree == null){
             return false;
         }
@@ -136,50 +284,6 @@ public class CreateBinaryTree_DFS_BFS {
         return false;
     }
 
-    private static boolean depthFirstTraversalUsingStackForGeneralTree(TreeMultiChildNode rootOfGeneralTree, int target) {
-        if(rootOfGeneralTree == null){
-            return false;
-        }
-
-        // stack to keep track of incoming nodes of the tree
-        // stack is used to imitate traverse the tree depth wise
-        Stack<TreeMultiChildNode> stack = new Stack<>();
-        stack.push(rootOfGeneralTree);
-
-        // track visited nodes
-        Set<TreeMultiChildNode> visitedSet = new HashSet<>();
-        visitedSet.add(rootOfGeneralTree);
-
-        while(!stack.isEmpty()){
-            TreeMultiChildNode popNode = stack.pop();
-
-            // prints the depth first traversal order
-            System.out.println(popNode.val);
-
-            if(popNode.val == target){ // check for a match
-                return true;
-            }
-
-            // for every childNode of popNode
-            for(int i = 0; i < popNode.childNodes.size(); i++){
-                TreeMultiChildNode tempChildNode = popNode.childNodes.get(i);
-
-                // if the tempChildNode is in the visited set
-                // true = successful addition = was not in the set
-                // false = otherwise = was in the set
-                boolean notPresentInVisitedSet = visitedSet.add(tempChildNode);
-
-                // successful addition of tempChildNode to visitedSet = node was not in the visited set
-                if(notPresentInVisitedSet == true){
-                    stack.push(tempChildNode);
-                }
-            }
-        }
-
-        // still not found
-        return false;
-    }
-
     private static boolean breadthFirstSearchForGeneralTree(TreeMultiChildNode rootOfGeneralTree, char target) {
         if(rootOfGeneralTree == null){
             return false;
@@ -218,6 +322,50 @@ public class CreateBinaryTree_DFS_BFS {
                 }
             }
         }
+        // still not found
+        return false;
+    }
+
+    private static boolean depthFirstTraversalUsingStackForGeneralTree(TreeMultiChildNode rootOfGeneralTree, int target) {
+        if(rootOfGeneralTree == null){
+            return false;
+        }
+
+        // stack to keep track of incoming nodes of the tree
+        // stack is used to imitate traverse the tree depth wise
+        Stack<TreeMultiChildNode> stack = new Stack<>();
+        stack.push(rootOfGeneralTree);
+
+        // track visited nodes
+        Set<TreeMultiChildNode> visitedSet = new HashSet<>();
+        visitedSet.add(rootOfGeneralTree);
+
+        while(!stack.isEmpty()){
+            TreeMultiChildNode popNode = stack.pop();
+
+            // prints the depth first traversal order
+            System.out.println(popNode.val);
+
+//            if(popNode.val == target){ // check for a match
+//                return true;
+//            }
+
+            // for every childNode of popNode
+            for(int i = 0; i < popNode.childNodes.size(); i++){
+                TreeMultiChildNode tempChildNode = popNode.childNodes.get(i);
+
+                // if the tempChildNode is in the visited set
+                // true = successful addition = was not in the set
+                // false = otherwise = was in the set
+                boolean notPresentInVisitedSet = visitedSet.add(tempChildNode);
+
+                // successful addition of tempChildNode to visitedSet = node was not in the visited set
+                if(notPresentInVisitedSet == true){
+                    stack.push(tempChildNode);
+                }
+            }
+        }
+
         // still not found
         return false;
     }
@@ -261,151 +409,6 @@ public class CreateBinaryTree_DFS_BFS {
         }
 
         return ;
-    }
-
-    /**
-     * A method to create a general tree in which nodes can 1 or 2 or more than 2 child nodes.
-     * This function creates a hardcoded tree.
-     *
-     *                  A
-     *                /   \
-     *               B --- C
-     *                \   /|
-     *                  D  |
-     *                 /   |
-     *                E   F
-     *                \  /
-     *                 G
-     *
-     *   Vertices are = A, B, C, D, E, F, G
-     *   Rest all lines are edges
-     *   A child = B, C
-     *   B child = A, C, D
-     *   C child = A, B, D, F
-     *   D child = B, C, E
-     *   E child = D, G
-     *   F child = C, G
-     *   G child = E, F
-     *
-     * */
-    private static TreeMultiChildNode createGeneralTreeHardcoded() {
-        TreeMultiChildNode root = new TreeMultiChildNode('A', new ArrayList<TreeMultiChildNode>());
-        TreeMultiChildNode bNode = new TreeMultiChildNode('B', new ArrayList<TreeMultiChildNode>());
-        TreeMultiChildNode cNode = new TreeMultiChildNode('C', new ArrayList<TreeMultiChildNode>());
-        TreeMultiChildNode dNode = new TreeMultiChildNode('D', new ArrayList<TreeMultiChildNode>());
-        TreeMultiChildNode eNode = new TreeMultiChildNode('E', new ArrayList<TreeMultiChildNode>());
-        TreeMultiChildNode fNode = new TreeMultiChildNode('F', new ArrayList<TreeMultiChildNode>());
-        TreeMultiChildNode gNode = new TreeMultiChildNode('G', new ArrayList<TreeMultiChildNode>());
-
-        root.childNodes.add(bNode);
-        root.childNodes.add(cNode);
-
-        bNode.childNodes.add(root);
-        bNode.childNodes.add(cNode);
-        bNode.childNodes.add(dNode);
-
-        cNode.childNodes.add(root);
-        cNode.childNodes.add(bNode);
-        cNode.childNodes.add(dNode);
-        cNode.childNodes.add(fNode);
-
-        dNode.childNodes.add(bNode);
-        dNode.childNodes.add(cNode);
-        dNode.childNodes.add(eNode);
-
-        eNode.childNodes.add(dNode);
-        eNode.childNodes.add(gNode);
-
-        fNode.childNodes.add(cNode);
-        fNode.childNodes.add(gNode);
-
-        gNode.childNodes.add(eNode);
-        gNode.childNodes.add(fNode);
-
-        return root;
-    }
-
-    private static boolean depthFirstSearchUsingRecursion(TreeNode tree, int target) {
-        if(tree == null){
-            return false;
-        }
-
-        if(tree.val == target){
-            return true;
-        }
-        //recurse in left depth
-        boolean foundInLeftDepth = depthFirstSearchUsingRecursion(tree.left, target);
-        //recurse in right depth
-        boolean foundInRightDepth = depthFirstSearchUsingRecursion(tree.right, target);
-
-        return foundInLeftDepth || foundInRightDepth;
-    }
-
-    private static boolean depthFirstSearchUsingStack(TreeNode tree, int target) {
-        if(tree == null){
-            return false;
-        }
-
-        // stack to keep track of incoming nodes of the tree
-        // stack is used to imitate traverse the tree depth wise
-        Stack<TreeNode> stack = new Stack<>();
-        stack.push(tree);
-
-        // track visited nodes
-        Set<TreeNode> visitedSet = new HashSet<TreeNode>();
-
-        while(!stack.isEmpty()){
-            TreeNode popNode = stack.pop();
-
-            if(popNode.val == target){ // check for a match
-                return true;
-            }
-
-            if(popNode.right != null){ // insert right node in the queue
-                stack.add(popNode.right);
-            }
-            if(popNode.left != null){ // insert left node in the queue
-                stack.add(popNode.left);
-            }
-
-            visitedSet.add(popNode);
-        }
-
-        // still not found
-        return false;
-    }
-
-    private static boolean breadthFirstSearch(TreeNode tree, int target) {
-        if(tree == null){
-            return false;
-        }
-
-        // queue to keep track of incoming nodes of the tree in level-order fashion
-        Queue<TreeNode> queue = new LinkedList<TreeNode>();
-        queue.add(tree);
-
-        // track visited nodes
-        Set<TreeNode> visitedSet = new HashSet<TreeNode>();
-
-        // implement BFS
-        while(!queue.isEmpty()){
-            TreeNode popNode = queue.poll(); // get the current node
-
-            if(popNode.val == target){ // check for a match
-                return true;
-            }
-
-            if(popNode.left != null){ // insert left node in the queue
-                queue.add(popNode.left);
-            }
-            if(popNode.right != null){ // insert right node in the queue
-                queue.add(popNode.right);
-            }
-
-            visitedSet.add(popNode); // update the visited set
-        }
-        // still not found
-        return false;
     }
 
     private static void printBinaryTree(TreeNode tree) {
